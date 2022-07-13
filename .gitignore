@@ -1,29 +1,5 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@e830225eric 
-github
-/
-gitignore
-Public
-Code
-Pull requests
-285
-Actions
-Security
-Insights
-gitignore/Swift.gitignore
-@Coeur
-Coeur Improving the documentation of Objective-C and Swift files (#3133)
-Latest commit e00d43a on Aug 7, 2019
- History
- 22 contributors
-@KrauseFx@Coeur@shiftkey@juliancadi@fidmor89@FabrizioBrancati@adrfer@nwest@nrbrook@natestedman@martinblech@yanniks
-90 lines (74 sloc)  2.12 KB
+#dependencies
+node_modules
 
 # Xcode
 #
@@ -115,21 +91,3 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-You have no unread notifications
-
-# dependencies
-node_modules

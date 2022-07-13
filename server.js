@@ -1,7 +1,9 @@
+//Node Modules
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const ejs = require("ejs");
+const _ = require("lodash");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
@@ -14,7 +16,7 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(session({
-  secret: "",
+  secret: "little secret",
   resave: false,
   saveUninitialized: false
 }));
@@ -27,7 +29,7 @@ app.use(passport.session());
 mongoose.connect("mongodb://localhost:27017/blogDB");
 
 
-//define schema for collection, which named User
+//define schema for User
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -44,6 +46,8 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.plugin(passportLocalMongoose);
+
+//define User
 const User = new mongoose.model("User", userSchema);
 
 //serialize & deserialize
@@ -54,31 +58,33 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-//Another data collections for store post
-
+//define schema for Post
 const postSchema = new mongoose.Schema({
   username:{
     type: String,
     require: true
   },
-  postTitle: Array,
-  postContent: Array
+  title: String,
+  content: String
 })
 
+//define Post
 const Post = new mongoose.model("Post", postSchema);
 
 
-
-
-
-app.get("/", function(req, res){
+//root page and front page
+app.get(["/",'/front'], function(req, res){
   res.render("front");
 })
 
+
+//register
 app.get("/register", function(req, res){
   res.render("register");
 })
 
+
+//login
 app.get("/login", function(req, res){
   res.render('login');
 })
@@ -87,11 +93,21 @@ app.get("/login", function(req, res){
 //home page
 app.get("/home", function(req, res){
   if (req.isAuthenticated()){
-    res.render("home");
+
+    Post.find({}, function(err, posts){
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("home", {
+          posts: posts
+        });
+      }}
+    )
   } else {
     res.redirect("/login")
   }
-})
+});
+
 
 //compose
 app.get("/compose", function(req, res){
@@ -103,12 +119,16 @@ app.get("/compose", function(req, res){
 })
 
 
-
-
 //logout
 app.get("/logout", function(req ,res){
-  req.logout();
-  res.redirect("/");
+  req.logout(function(err){
+    if (err) {
+      console.log(err);
+    } else {
+      req.session.username = "";
+      res.redirect("/");
+    }
+  });
 })
 
 
@@ -127,6 +147,7 @@ app.post("/register", function(req, res){
   })
 })
 
+
 //login
 app.post("/login", function(req, res){
 
@@ -138,39 +159,58 @@ app.post("/login", function(req, res){
   req.login(user, function(err){
     if (err) {
       console.log(err);
+      res.redirect("/front");
     } else {
       passport.authenticate("local")(req, res, function(){
-        res.redirect("/home");
+        req.session.username = req.user.username;
+        res.redirect("/home")
       })
     }
   })
 })
 
+
 //compose
 app.post("/compose", function(req, res){
 
-  console.log(req.session.user);
+  const post = new Post({
+    username: req.user.username,
+    title: req.body.postTitle,
+    content: req.body.postContent
+  })
 
-  // User.findOne({_id: req.body._id}, function(err, foundUser){
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     console.log(foundUser);
-  //   }
-  // })
-
-  // const post = new Post({
-  //   title: req.body.postTitle,
-  //   content: req.body.postContent
-  // })
-
-
-})
+  post.save(function(err) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.redirect("/home");
+    }
+  });
+});
 
 
+//postid
+app.get("/posts/:postId", function(req, res){
+  const requestedPostId = req.params.postId;
+
+  Post.findOne({_id: requestedPostId.trim()}, function(err, post){
+    if (err) {
+      console.log(err);
+    } if (!post) {
+      console.log("No post found");
+    } else{
+      res.render("post", {
+        username: post.username,
+        title: post.title,
+        content: post.content
+      });
+    }
+  });
+});
 
 
 
+//port
 app.listen(3000, function(){
   console.log("Server on port 3000!");
-})
+});

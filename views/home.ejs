@@ -1,7 +1,21 @@
 <%- include("partials/header") -%>
 
-  <div class="container">
+<div class="container row">
 
-  </div>
+  <% posts.forEach(function(posts){ %>
+    <div class="container-home">
+      <h2 class="blog-post-title mb-1"><%= posts.title %></h2>
+      <p><%= posts.username %></p>
+      <% if (typeof posts.content == "undefined") { %>
+        <p>no content</p>
+      <% } else { %>
+        <p class="blog-post-meta"> <%= posts.content.substring(0,130) + "..." %>
+          <a href="/posts/ <%= posts._id %>" >Read More</a>
+        </p>
+      <% } %>
+    </div>
+  <% }) %>
+
+</div>
 
 <%- include("partials/footer") -%>

@@ -1,25 +1,25 @@
 <%- include("partials/frontHeader") -%>
 
-<div class="container centered">
+<div class="container center">
     <!-- <img class="mb-4" src="" alt="" width="72" height="57"> -->
   <h1 class="h3 mb-3 fw-normal">Please Sign Up</h1>
 
   <form action="/register" method="POST">
     <div class="form-floating left">
-      <label>User Name (Name will be shown in blog)</label>
+      <label class="register-letter">User Name (Name will be shown in blog)</label>
       <input type="text" class="form-control" name="username" placeholder="spiderman">
     </div>
 
     <div class="form-floating left">
-      <label>Email address</label>
+      <label class="register-letter">Email address</label>
       <input type="email" class="form-control" name="email" placeholder="name@example.com">
     </div>
 
     <div class="form-floating left">
-      <label>Password</label>
+      <label class="register-letter">Password</label>
       <input type="password" class="form-control"  name="password" placeholder="Password">
     </div>
-
+    <br>
     <button class="w-100 btn btn-lg btn-secondary" type="submit">Sign Up</button>
     <!-- <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p> -->
   </form>
